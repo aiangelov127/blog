@@ -199,8 +199,9 @@ def contact():
         tel = contact_form.phone.data
         message = contact_form.message.data
         send_mail(email, name, tel, message)
-        return render_template("contact.html", message_sent=True, form=contact_form)
-    return render_template("contact.html", message_sent=False, form=contact_form)
+        flash("Message is sent")
+        return redirect(url_for('contact'))
+    return render_template("contact.html", form=contact_form)
 
 
 
