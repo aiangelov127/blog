@@ -90,7 +90,7 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
 
-# db.create_all()
+db.create_all()
 
 
 # Decorator to check admin status
