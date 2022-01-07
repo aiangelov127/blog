@@ -1,4 +1,5 @@
 import datetime as dt
+import os
 from functools import wraps
 from os import abort
 
@@ -17,7 +18,7 @@ from flask_gravatar import Gravatar
 import time
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
+app.config['SECRET_KEY'] = os.environ.get('8BYkEfBA6O6donzWlSihBXox7C0sKR6b')
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
@@ -42,7 +43,7 @@ def load_user(user_id):
 
 
 # CONNECT TO DATABASE
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite://blog.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
