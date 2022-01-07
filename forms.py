@@ -30,5 +30,5 @@ class ContactForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     email = StringField("Email Address", validators=[DataRequired()])
     phone = StringField("Phone")
-    message = StringField("Message", validators=[DataRequired()])
+    message = CKEditorField("Message", validators=[DataRequired()])
     submit = SubmitField("Send message")
