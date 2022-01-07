@@ -11,7 +11,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
-from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
+from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm, ContactForm
 from flask_gravatar import Gravatar
 import time
 
@@ -192,15 +192,15 @@ def about():
 
 @app.route("/contact", methods=['GET', 'POST'])
 def contact():
-    if request.method == "POST":
-        data = request.form
-        name = data['name']
-        email = data['email']
-        tel = data['tel']
-        message = data['message']
+    contact_form = ContactForm()
+    if contact_form.validate_on_submit():
+        name = contact_form.name.data
+        email = contact_form.email.data
+        tel = contact_form.phone.data
+        message = contact_form.message.data
         send_mail(email, name, tel, message)
-        return render_template("contact.html", message_sent=True)
-    return render_template("contact.html", message_sent=False)
+        return render_template("contact.html", message_sent=True, form=contact_form)
+    return render_template("contact.html", message_sent=False, form=contact_form)
 
 
 
