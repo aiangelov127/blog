@@ -2,12 +2,10 @@ import datetime as dt
 import os
 from functools import wraps
 from os import abort
-
 from flask import Flask, render_template, redirect, url_for, flash, request, g
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from datetime import date
-
 from sqlalchemy import ForeignKey, Column
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -16,6 +14,10 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 from flask_gravatar import Gravatar
 import time
+
+import smtplib
+my_email = os.environ.get("EMAIL")
+password = os.environ.get("EMAIL_PASS")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
@@ -188,9 +190,18 @@ def about():
     return render_template("about.html")
 
 
-@app.route("/contact")
+@app.route("/contact", methods=['GET', 'POST'])
 def contact():
-    return render_template("contact.html")
+    if request.method == "POST":
+        data = request.form
+        name = data['name']
+        email = data['email']
+        tel = data['tel']
+        message = data['message']
+        send_mail(email, name, tel, message)
+        return render_template("contact.html", message_sent=True)
+    return render_template("contact.html", message_sent=False)
+
 
 
 @app.route("/new-post", methods=["GET", "POST"])
@@ -246,6 +257,20 @@ def delete_post(post_id):
 def footer_datetime():
     year = dt.datetime.now().strftime("%Y")
     return dict(year=year)  # This is the way to return the function, so it could be used throughout the website.
+
+
+# EMAIL SENDER
+def send_mail(email, name, tel, message):
+    with smtplib.SMTP("smtp.gmail.com") as connection:
+        connection.starttls()
+        connection.login(user=my_email, password=password)
+        connection.sendmail(from_addr=my_email,
+                            to_addrs="naskoia7@gmail.com",
+                            msg=f"Message from Nasko's web blog ({email})"
+                                "\n\n "
+                                f"Name: {name}, phone {tel}, message: \n {message}"
+                            )
+
 
 
 if __name__ == "__main__":
